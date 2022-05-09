@@ -29,7 +29,7 @@ void main(List<String> arguments) {
   }
 }
 
-void disassembleLayer1(int WORD) {
+int decodeInstruction(int WORD) {
   // Layer 1
   switch ((WORD & 0xC000) >> 14) {
     case 0:
@@ -39,19 +39,33 @@ void disassembleLayer1(int WORD) {
           // Layer 1.1.1
           switch ((WORD & 0xC00) >> 12) {
             case 0:
-              // Layer 1.1.1.1
+              // Base Instructions
               switch ((WORD & 0x300) >> 12) {
-                case 0:
-                  break;
+                case 0: return 1; // NOP
+                case 1: return 2; // MOVW
+                case 2: return 3; // MULS
+                case 3:
+                  if (WORD & 0x80 == 0x0) {
+                    if (WORD & 0x8 == 0x0) {
+                      return 4; // MULSU
+                    } else {
+                      return 5; // FMUL
+                    }
+                  } else {
+                    return 6; // FMULS
+                  }
               }
               break;
+            case 1:
+            switch
           }
           break;
       }
 
       break;
     default:
+      return 199;
   }
-}
 
-String generateInstruction(int instruction, int WORD) {}
+  return 199;
+}
