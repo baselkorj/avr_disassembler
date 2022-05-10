@@ -1,10 +1,5 @@
-import 'dart:ffi';
+import 'package:avr_disassembler/decoder.dart' as decoder;
 import 'dart:io';
-import 'dart:convert';
-
-import 'dart:typed_data';
-
-int WORD = 0;
 
 List<String> supportedMimeTypes = ['.hex'];
 void main(List<String> arguments) {
@@ -15,57 +10,17 @@ void main(List<String> arguments) {
 
   String tmp = File(arguments[0]).readAsStringSync();
 
-  // ignore: dead_code
-  for (int i = 1; i < tmp.length; i += 2) {
-    i += 8;
+  int i = 0;
+
+  while (i < tmp.length) {
+    int WORD = 0;
 
     WORD = int.parse(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1], radix: 16);
 
-    if (WORD & 0x03FF == 0x0C) {
-      print('true');
-    }
+    decoder.decodeInstruction(WORD);
 
-    exit(0);
-  }
-}
-
-int decodeInstruction(int WORD) {
-  // Layer 1
-  switch ((WORD & 0xC000) >> 14) {
-    case 0:
-      // Layer 1.1
-      switch ((WORD & 0x3000) >> 14) {
-        case 0:
-          // Layer 1.1.1
-          switch ((WORD & 0xC00) >> 12) {
-            case 0:
-              // Base Instructions
-              switch ((WORD & 0x300) >> 12) {
-                case 0: return 1; // NOP
-                case 1: return 2; // MOVW
-                case 2: return 3; // MULS
-                case 3:
-                  if (WORD & 0x80 == 0x0) {
-                    if (WORD & 0x8 == 0x0) {
-                      return 4; // MULSU
-                    } else {
-                      return 5; // FMUL
-                    }
-                  } else {
-                    return 6; // FMULS
-                  }
-              }
-              break;
-            case 1:
-            switch
-          }
-          break;
-      }
-
-      break;
-    default:
-      return 199;
+    i += 4;
   }
 
-  return 199;
+  exit(0);
 }
