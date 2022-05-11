@@ -1,14 +1,14 @@
 int decodeInstruction(int WORD) {
-  // Layer 1
+  // X X b b b b b b   b b b b b b b b
   switch ((WORD & 0xC000) >> 14) {
     case 0:
-      // Layer 1.1
+      // b b X X b b b b   b b b b b b b b
       switch ((WORD & 0x3000) >> 14) {
         case 0:
-          // Layer 1.1.1
+          // b b b b X X b b   b b b b b b b b
           switch ((WORD & 0xC00) >> 12) {
+            // Base Instructions
             case 0:
-              // Base Instructions
               switch ((WORD & 0x300) >> 12) {
                 case 0:
                   return 1; // NOP
@@ -17,20 +17,44 @@ int decodeInstruction(int WORD) {
                 case 2:
                   return 3; // MULS
                 case 3:
-                  if (WORD & 0x80 == 0x0) {
-                    if (WORD & 0x8 == 0x0) {
+                  if (WORD & 0x80 == 0) {
+                    if (WORD & 0x8 == 0) {
                       return 4; // MULSU
                     } else {
                       return 5; // FMUL
                     }
                   } else {
-                    return 6; // FMULS
+                    if (WORD & 0x8 == 0) {
+                      return 6; // FMULS
+                    }
+                    return 7; // FMULU
                   }
               }
               break;
-            case 1:
           }
           break;
+      }
+
+      // b b X X X X b b   b b b b b b b b
+      switch ((WORD & 0x3C00) >> 12) {
+        case 1:
+          return 8; // CPC
+        case 5:
+          return 9; // CP
+        case 2:
+          return 10; // SBC
+        case 6:
+          return 11; // SUB
+        case 3:
+          return 12; // ADD
+        case 7:
+          return 13; // ADC
+        case 4:
+          return 14; // CPSE
+        case 8:
+          return 15; // AND
+        case 9:
+          return 16; //
       }
 
       break;

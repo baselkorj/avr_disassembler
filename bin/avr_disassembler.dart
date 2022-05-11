@@ -1,4 +1,4 @@
-import 'package:avr_disassembler/decoder.dart' as decoder;
+import '../lib/decoder.dart' as decoder;
 import 'dart:io';
 
 List<String> supportedMimeTypes = ['.hex'];
