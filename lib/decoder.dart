@@ -67,6 +67,22 @@ int decodeInstruction(int WORD) {
 
       break;
 
+    case 1:
+      switch ((WORD & 0x3000) >> 14) {
+        case 0:
+          return 20; // SBCI
+        case 1:
+          return 21; //SUBI
+        case 2:
+          return 22; // SBR & ORI
+        case 3:
+          return 23; // CBD & ANDI
+      }
+      break;
+
+    case 2:
+      break;
+
     default:
       return 199;
   }
