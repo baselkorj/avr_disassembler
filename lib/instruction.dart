@@ -18,16 +18,9 @@ int decode(int WORD) {
                   return 3; // MULS
                 case 3:
                   if (WORD & 0x80 == 0) {
-                    if (WORD & 0x8 == 0) {
-                      return 4; // MULSU
-                    } else {
-                      return 5; // FMUL
-                    }
+                    return (WORD & 0x8 == 0) == 0 ? 4 : 5; // MULSU | FMUL
                   } else {
-                    if (WORD & 0x8 == 0) {
-                      return 6; // FMULS
-                    }
-                    return 7; // FMULU
+                    return (WORD & 0x8 == 0) == 0 ? 6 : 7; // FMULS | FMULU
                   }
               }
               break;
@@ -37,6 +30,7 @@ int decode(int WORD) {
 
       // b b X X X X b b   b b b b b b b b
       switch ((WORD & 0x3C00) >> 12) {
+        // 2-Operand Instructions
         case 1:
           return 8; // CPC
         case 5:
@@ -61,9 +55,7 @@ int decode(int WORD) {
           return 18; // MOV
       }
 
-      if (((WORD & 0x3000) >> 14) == 3) {
-        return 19; // CPI
-      }
+      if (((WORD & 0x3000) >> 14) == 3) return 19; // CPI
 
       break;
 
@@ -81,6 +73,31 @@ int decode(int WORD) {
       break;
 
     case 2:
+      switch ((WORD & 0x3000) >> 14) {
+        case 0 | 2:
+          if ((WORD & 0x200) >> 9 == 0) {
+            return 24; // LDD
+          } else {
+            return 25; // STD
+          }
+        case 1:
+          switch ((WORD & 0xC00) >> 12) {
+            case 0:
+              switch (WORD & 0xF) {
+                case 0:
+                  return (WORD & 0x200) == 0 ? 26 : 27; // LDS | STS
+                case 1 | 2 | 9 | 10:
+                  return (WORD & 0x200) == 0 ? 28 : 29; // LD | ST
+                case 4 | 5 | 6 | 7:
+                  return (WORD & 0x2) == 0 ? 30 : 31; // LPM | ELPM
+
+              }
+              break;
+          }
+          break;
+        case 3:
+          break;
+      }
       break;
 
     default:
