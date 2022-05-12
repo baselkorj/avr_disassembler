@@ -1,10 +1,11 @@
-import '../lib/decoder.dart' as decoder;
+import '../lib/instruction.dart' as instruction;
+import '../lib/checksum.dart' as checksum;
 import 'dart:io';
 
 List<String> supportedMimeTypes = ['.hex'];
 void main(List<String> arguments) {
   if (!arguments[0].endsWith('.hex')) {
-    print("File Type not HEX");
+    print("File is NOT of HEX Type");
     exit(0);
   }
 
@@ -21,7 +22,7 @@ void main(List<String> arguments) {
       WORD =
           int.parse(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1], radix: 16);
 
-      decoder.decodeInstruction(WORD);
+      instruction.decode(WORD);
 
       i += 4;
       j++;

@@ -1,4 +1,4 @@
-int decodeInstruction(int WORD) {
+int decode(int WORD) {
   // X X b b b b b b   b b b b b b b b
   switch ((WORD & 0xC000) >> 14) {
     case 0:
