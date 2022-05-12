@@ -54,10 +54,19 @@ int decodeInstruction(int WORD) {
         case 8:
           return 15; // AND
         case 9:
-          return 16; //
+          return 16; // EOR
+        case 10:
+          return 17; // OR
+        case 11:
+          return 18; // MOV
+      }
+
+      if (((WORD & 0x3000) >> 14) == 3) {
+        return 19; // CPI
       }
 
       break;
+
     default:
       return 199;
   }
