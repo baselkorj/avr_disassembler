@@ -13,14 +13,14 @@ int decode(int WORD) {
                 case 0:
                   return 1; // NOP
                 case 1:
-                  return 2; // MOVW
+                  return 2; // MOVW Rd,Rr
                 case 2:
-                  return 3; // MULS
+                  return 3; // MULS Rd,Rr
                 case 3:
                   if (WORD & 0x80 == 0) {
-                    return (WORD & 0x8 == 0) == 0 ? 4 : 5; // MULSU | FMUL
+                    return WORD & 0x8 == 0 ? 4 : 5; // MULSU Rd,Rr | FMUL Rd,Rr
                   } else {
-                    return (WORD & 0x8 == 0) == 0 ? 6 : 7; // FMULS | FMULU
+                    return WORD & 0x8 == 0 ? 6 : 7; // FMULS Rd,Rr | FMULU Rd,Rr
                   }
               }
               break;
@@ -32,30 +32,30 @@ int decode(int WORD) {
       switch ((WORD & 0x3C00) >> 12) {
         // 2-Operand Instructions
         case 1:
-          return 8; // CPC
+          return 8; // CPC Rd,Rr
         case 5:
-          return 9; // CP
+          return 9; // CP Rd,Rr
         case 2:
-          return 10; // SBC
+          return 10; // SBC Rd,Rr
         case 6:
-          return 11; // SUB
+          return 11; // SUB Rd,Rr
         case 3:
-          return 12; // ADD
+          return (WORD & 0xF == WORD & 0x1F0) ? 12 : 13; // ADD Rd,Rr | LSL Rd
         case 7:
-          return 13; // ADC
+          return (WORD & 0xF == WORD & 0x1F0) ? 14 : 15; // ADC Rd,Rr | ROL Rd
         case 4:
-          return 14; // CPSE
+          return 16; // CPSE Rd,Rr
         case 8:
-          return 15; // AND
+          return 17; // AND Rd,Rr
         case 9:
-          return 16; // EOR
+          return 18; // EOR Rd,Rr
         case 10:
-          return 17; // OR
+          return 19; // OR Rd,Rr
         case 11:
-          return 18; // MOV
+          return 20; // MOV Rd,Rr
       }
 
-      if (((WORD & 0x3000) >> 14) == 3) return 19; // CPI
+      if (((WORD & 0x3000) >> 14) == 3) return 21; // CPI
 
       break;
 
@@ -84,6 +84,17 @@ int decode(int WORD) {
               return 25; // STS
           }
           break;
+
+        default:
+          if ((WORD & 0x5000) >> 12 == 0) {
+            return (WORD & 0x200) == 0
+                ? (WORD & 0x8) == 0
+                    ? 24 // LDD
+                    : 25
+                : (WORD & 0x8) == 0
+                    ? 26
+                    : 27;
+          }
       }
       break;
 
