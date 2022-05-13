@@ -73,31 +73,21 @@ int decode(int WORD) {
       break;
 
     case 2:
-      switch ((WORD & 0x3000) >> 14) {
-        case 0 | 2:
-          if ((WORD & 0x200) >> 9 == 0) {
-            return 24; // LDD
-          } else {
-            return 25; // STD
-          }
-        case 1:
-          switch ((WORD & 0xC00) >> 12) {
+      // b b X X X X b b   b b b b b b b b
+      switch ((WORD & 0x3C00) >> 10) {
+        // Load / Store Operations
+        case 4:
+          switch ((WORD & 0x20F) >> 9) {
             case 0:
-              switch (WORD & 0xF) {
-                case 0:
-                  return (WORD & 0x200) == 0 ? 26 : 27; // LDS | STS
-                case 1 | 2 | 9 | 10:
-                  return (WORD & 0x200) == 0 ? 28 : 29; // LD | ST
-                case 4 | 5 | 6 | 7:
-                  return (WORD & 0x2) == 0 ? 30 : 31; // LPM | ELPM
-
-              }
-              break;
+              return 24; // LDS
+            case 0x200:
+              return 25; // STS
           }
-          break;
-        case 3:
           break;
       }
+      break;
+
+    case 3:
       break;
 
     default:
