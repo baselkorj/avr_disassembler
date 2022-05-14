@@ -2,10 +2,10 @@ int decode(int WORD) {
   // X X b b b b b b   b b b b b b b b
   switch ((WORD & 0xC000) >> 14) {
     case 0:
-      // b b X X b b b b   b b b b b b b b
+      // 0 0 X X b b b b   b b b b b b b b
       switch ((WORD & 0x3000) >> 14) {
         case 0:
-          // b b b b X X b b   b b b b b b b b
+          // 0 0 0 0 X X b b   b b b b b b b b
           switch ((WORD & 0xC00) >> 12) {
             // Base Instructions
             case 0:
@@ -28,7 +28,7 @@ int decode(int WORD) {
           break;
       }
 
-      // b b X X X X b b   b b b b b b b b
+      // 0 0 X X X X b b   b b b b b b b b
       switch ((WORD & 0x3C00) >> 12) {
         // 2-Operand Instructions
         case 1:
@@ -53,22 +53,21 @@ int decode(int WORD) {
           return 19; // OR Rd,Rr
         case 11:
           return 20; // MOV Rd,Rr
+        default:
+          return 21; // CPI Rd,K
       }
 
-      if (((WORD & 0x3000) >> 14) == 3) return 21; // CPI
-
-      break;
-
     case 1:
+      // Register-Immediate Operations
       switch ((WORD & 0x3000) >> 14) {
         case 0:
-          return 20; // SBCI
+          return 20; // SBCI | Rd,K
         case 1:
-          return 21; //SUBI
+          return 21; //SUBI | Rd,K
         case 2:
-          return 22; // SBR & ORI
+          return 22; // SBR & ORI | Rd, K
         case 3:
-          return 23; // CBD & ANDI
+          return 23; // CBD & ANDI | Rd,K
       }
       break;
 
