@@ -1,3 +1,5 @@
+import 'dart:html';
+
 int decode(int WORD) {
   // X X b b b b b b   b b b b b b b b
   switch ((WORD & 0xC000) >> 14) {
@@ -157,9 +159,31 @@ int decode(int WORD) {
 }
 
 int docode_V2(int WORD) {
-  /*---------------------- Base Instructions ----------------------*/
-  if (WORD == 0) return 0; // NOP
+  /*---------------------- No-Operand Instructions ----------------------*/
+  switch (WORD) {
+    case 0x0:
+      return 0; // NOP
+    case 0x9508:
+      return 1; // RET
+    case 0x9518:
+      return 2; // RETI
+    case 0x9588:
+      return 3; // SLEEP
+    case 0x9598:
+      return 4; // BREAK
+    case 0x95A8:
+      return 5; // WDR
+    case 0x95C8:
+      return 6; // LPM
+    case 0x95D8:
+      return 7; // ELPM
+    case 0x95E8:
+      return 8; // SPM
+    case 0x95F8:
+      return 9; // SPM Z+
+  }
 
+  /*-------------------- 2-Operand Instructions -------------------*/
   switch (WORD & 0xFF00) {
     case 0x100:
       return 1; // MOVW Rd,Rr
@@ -178,7 +202,6 @@ int docode_V2(int WORD) {
       return 6; // FMULU Rd,Rr
   }
 
-  /*-------------------- 2-Operand Instructions -------------------*/
   switch (WORD & 0xFC00) {
     case 0x400:
       return 7; // CPC Rd,Rr
@@ -220,6 +243,7 @@ int docode_V2(int WORD) {
       return 25; // LDD Rd through Z+k
   }
 
+  /*-------------------- Load / Store operations ------------------*/
   switch (WORD & 0xD208) {
     case 0x8000:
       return 26; // LDD Rd through Z+k
@@ -231,7 +255,12 @@ int docode_V2(int WORD) {
       return 29; // STD Rd through Y+k
   }
 
-  /*-------------------- Load / Store operations ------------------*/
+  switch (WORD & 0xFE0F) {
+    case 0x9000:
+      return 30; // LDS rd, i
+    case 0x9200:
+      return 31; // STS i, rd
+  }
 
   return 199;
 }
