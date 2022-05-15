@@ -155,3 +155,83 @@ int decode(int WORD) {
 
   return 199;
 }
+
+int docode_V2(int WORD) {
+  /*---------------------- Base Instructions ----------------------*/
+  if (WORD == 0) return 0; // NOP
+
+  switch (WORD & 0xFF00) {
+    case 0x100:
+      return 1; // MOVW Rd,Rr
+    case 0x200:
+      return 2; // MULS Rd,Rr
+  }
+
+  switch (WORD & 0xFF88) {
+    case 0x300:
+      return 3; // MULSU Rd,Rr
+    case 0x308:
+      return 4; // FMUL Rd,Rr
+    case 0x380:
+      return 5; // FMULS Rd,Rr
+    case 0x388:
+      return 6; // FMULU Rd,Rr
+  }
+
+  /*-------------------- 2-Operand Instructions -------------------*/
+  switch (WORD & 0xFC00) {
+    case 0x400:
+      return 7; // CPC Rd,Rr
+    case 0x1400:
+      return 8; // CP Rd,Rr
+    case 0x800:
+      return 9; // SBC Rd,Rr
+    case 0x1800:
+      return 10; // SUB Rd,Rr
+    case 0xC00:
+      return (WORD & 0xF == WORD & 0x1F0) ? 11 : 12; // ADD Rd,Rr | LSL Rd
+    case 0x1C00:
+      return (WORD & 0xF == WORD & 0x1F0) ? 13 : 14; // ADC Rd,Rr | ROL Rd
+    case 0x1000:
+      return 15; // CPSE Rd,Rr
+    case 0x2000:
+      return 16; // AND Rd,Rr
+    case 0x2400:
+      return 17; // EOR Rd,Rr
+    case 0x2800:
+      return 18; // OR Rd,Rr
+    case 0x2C00:
+      return 19; // MOV Rd,Rr
+  }
+
+  if (WORD & 0xF000 == 0x3000) return 20; // CPI Rd,K
+
+  /*----------------- Register Immediate Operations ---------------*/
+  switch (WORD & 0xF000) {
+    case 0x4000:
+      return 21; // SBCI Rd,K
+    case 0x5000:
+      return 22; // SUBI Rd,K
+    case 0x6000:
+      return 23; // ORI Rd,K | SBR Rd,K
+    case 0x7000:
+      return 24; // ANDI Rd,K | CBR Rd,K
+    case 0x8000 | 0xA000:
+      return 25; // LDD Rd through Z+k
+  }
+
+  switch (WORD & 0xD208) {
+    case 0x8000:
+      return 26; // LDD Rd through Z+k
+    case 0x8008:
+      return 27; // LDD Rd through Y+k
+    case 0x8200:
+      return 28; // STD Rd through Z+k
+    case 0x8208:
+      return 29; // STD Rd through Y+k
+  }
+
+  /*-------------------- Load / Store operations ------------------*/
+
+  return 199;
+}
