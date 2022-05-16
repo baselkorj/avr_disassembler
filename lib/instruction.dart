@@ -168,205 +168,261 @@ int docode_V2(int WORD) {
     case 0x9409:
       return 2; // JMP to Z
     case 0x9418:
-      return 2; // SEZ
+      return 3; // SEZ
     case 0x9419:
-      return 3; // JMP to EIND:Z
+      return 4; // JMP to EIND:Z
     case 0x9428:
-      return 2; // SEN
+      return 5; // SEN
     case 0x9438:
-      return 5; // SEV
+      return 6; // SEV
     case 0x9448:
-      return 3; // SES
+      return 7; // SES
     case 0x9458:
-      return 2; // SEH
+      return 8; // SEH
     case 0x9468:
-      return 4; // SET
+      return 9; // SET
     case 0x9478:
-      return 3; // SEI
+      return 10; // SEI
     case 0x9488:
-      return 1; // CLC
+      return 11; // CLC
     case 0x9498:
-      return 2; // CLZ
+      return 12; // CLZ
     case 0x94A8:
-      return 4; // CLN
+      return 13; // CLN
     case 0x94B8:
-      return 5; // CLV
+      return 14; // CLV
     case 0x94C8:
-      return 5; // CLS
+      return 15; // CLS
     case 0x94D8:
-      return 2; // CLH
+      return 16; // CLH
     case 0x94E8:
-      return 6; // CLT
+      return 17; // CLT
     case 0x94F8:
-      return 3; // CLI
+      return 18; // CLI
     case 0x9508:
-      return 1; // RET
+      return 19; // RET
     case 0x9509:
-      return 0; // CALL to Z
+      return 20; // CALL to Z
     case 0x9518:
-      return 2; // RETI
+      return 21; // RETI
     case 0x9519:
-      return 1; // CALL to EIND:Z
+      return 22; // CALL to EIND:Z
     case 0x9588:
-      return 3; // SLEEP
+      return 23; // SLEEP
     case 0x9598:
-      return 4; // BREAK
+      return 24; // BREAK
     case 0x95A8:
-      return 5; // WDR
+      return 25; // WDR
     case 0x95C8:
-      return 6; // LPM
+      return 26; // LPM
     case 0x95D8:
-      return 7; // ELPM
+      return 27; // ELPM
     case 0x95E8:
-      return 8; // SPM
+      return 28; // SPM
     case 0x95F8:
-      return 9; // SPM Z+
+      return 29; // SPM Z+
   }
 
   /*-------------------- 2-Operand Instructions -------------------*/
   switch (WORD & 0xFF00) {
     case 0x100:
-      return 10; // MOVW Rd,Rr
+      return 30; // MOVW Rd,Rr
     case 0x200:
-      return 11; // MULS Rd,Rr
+      return 31; // MULS Rd,Rr
   }
 
   switch (WORD & 0xFF88) {
     case 0x300:
-      return 12; // MULSU Rd,Rr
+      return 32; // MULSU Rd,Rr
     case 0x308:
-      return 13; // FMUL Rd,Rr
+      return 33; // FMUL Rd,Rr
     case 0x380:
-      return 14; // FMULS Rd,Rr
+      return 34; // FMULS Rd,Rr
     case 0x388:
-      return 15; // FMULU Rd,Rr
+      return 35; // FMULU Rd,Rr
   }
 
   switch (WORD & 0xFC00) {
     case 0x400:
-      return 16; // CPC Rd,Rr
+      return 36; // CPC Rd,Rr
     case 0x1400:
-      return 17; // CP Rd,Rr
+      return 37; // CP Rd,Rr
     case 0x800:
-      return 18; // SBC Rd,Rr
+      return 38; // SBC Rd,Rr
     case 0x1800:
-      return 19; // SUB Rd,Rr
+      return 39; // SUB Rd,Rr
     case 0xC00:
-      return (WORD & 0xF == WORD & 0x1F0) ? 20 : 21; // ADD Rd,Rr | LSL Rd
+      return (WORD & 0xF == WORD & 0x1F0) ? 40 : 41; // ADD Rd,Rr | LSL Rd
     case 0x1C00:
-      return (WORD & 0xF == WORD & 0x1F0) ? 22 : 23; // ADC Rd,Rr | ROL Rd
+      return (WORD & 0xF == WORD & 0x1F0) ? 42 : 43; // ADC Rd,Rr | ROL Rd
     case 0x1000:
-      return 24; // CPSE Rd,Rr
+      return 44; // CPSE Rd,Rr
     case 0x2000:
-      return 25; // AND Rd,Rr
+      return 45; // AND Rd,Rr
     case 0x2400:
-      return 26; // EOR Rd,Rr | CLR if Rd is Rr
+      return 46; // EOR Rd,Rr | CLR if Rd is Rr
     case 0x2800:
-      return 27; // OR Rd,Rr
+      return 47; // OR Rd,Rr
     case 0x2C00:
-      return 28; // MOV Rd,Rr
+      return 48; // MOV Rd,Rr
+    case 0xF000:
+      return 49; // Conditional branch on status register bit
+    case 0xF400:
+      return 50; // Conditional branch on status register bit
   }
 
-  if (WORD & 0xF000 == 0x3000) return 29; // CPI Rd,K
+  if (WORD & 0xF000 == 0x3000) return 51; // CPI Rd,K
 
   /*----------------- Register Immediate Operations ---------------*/
   switch (WORD & 0xF000) {
     case 0x4000:
-      return 30; // SBCI Rd,K
+      return 52; // SBCI Rd,K
     case 0x5000:
-      return 31; // SUBI Rd,K
+      return 53; // SUBI Rd,K
     case 0x6000:
-      return 32; // ORI Rd,K | SBR Rd,K
+      return 54; // ORI Rd,K | SBR Rd,K
     case 0x7000:
-      return 33; // ANDI Rd,K | CBR Rd,K
+      return 55; // ANDI Rd,K | CBR Rd,K
     case 0x8000 | 0xA000:
-      return 34; // LDD Rd through Z+k
+      return 56; // LDD Rd through Z+k
   }
 
   /*-------------------- Load / Store operations ------------------*/
   switch (WORD & 0xD208) {
     case 0x8000:
-      return 35; // LDD Rd through Z+k
+      return 57; // LDD Rd through Z+k
     case 0x8008:
-      return 36; // LDD Rd through Y+k
+      return 58; // LDD Rd through Y+k
     case 0x8200:
-      return 37; // STD Rd through Z+k
+      return 59; // STD Rd through Z+k
     case 0x8208:
-      return 38; // STD Rd through Y+k
+      return 60; // STD Rd through Y+k
   }
 
   switch (WORD & 0xFE0F) {
     case 0x9000:
-      return 39; // LDS rd, i
+      return 61; // LDS rd, i
     case 0x9200:
-      return 40; // STS i, rd
+      return 62; // STS i, rd
     case 0x9001:
-      return 41; // LD Rd through Z+
+      return 63; // LD Rd through Z+
     case 0x9009:
-      return 42; // LD Rd through Y+
+      return 64; // LD Rd through Y+
     case 0x9002:
-      return 43; // LD Rd through -Z
+      return 65; // LD Rd through -Z
     case 0x900A:
-      return 44; // LD Rd through -Y
+      return 66; // LD Rd through -Y
     case 0x900C:
-      return 45; // LD Rd through X
+      return 67; // LD Rd through X
     case 0x900D:
-      return 46; // LD Rd through X+
+      return 68; // LD Rd through X+
     case 0x900E:
-      return 47; // LD Rd through -X
+      return 69; // LD Rd through -X
     case 0x9201:
-      return 48; // ST Rd through Z+
+      return 70; // ST Rd through Z+
     case 0x9209:
-      return 49; // ST Rd through Y+
+      return 71; // ST Rd through Y+
     case 0x9202:
-      return 50; // ST Rd through -Z
+      return 72; // ST Rd through -Z
     case 0x920A:
-      return 51; // ST Rd through -Y
+      return 73; // ST Rd through -Y
     case 0x920C:
-      return 52; // ST Rd through X
+      return 74; // ST Rd through X
     case 0x920D:
-      return 53; // ST Rd through X+
+      return 75; // ST Rd through X+
     case 0x920E:
-      return 54; // ST Rd through -X
+      return 76; // ST Rd through -X
     case 0x9004:
-      return 55; // LPM Rd, Z
+      return 77; // LPM Rd, Z
     case 0x9005:
-      return 56; // LPM Rd, Z+
+      return 78; // LPM Rd, Z+
     case 0x9006:
-      return 57; // ELPM Rd, Z
+      return 79; // ELPM Rd, Z
     case 0x9007:
-      return 58; // ELPM Rf, Z+
+      return 80; // ELPM Rf, Z+
     case 0x9204:
-      return 59; // XCH Z, Rd
+      return 81; // XCH Z, Rd
     case 0x9205:
-      return 60; // LAS Z, Rd
+      return 82; // LAS Z, Rd
     case 0x9206:
-      return 61; // LAC Z, Rd
+      return 83; // LAC Z, Rd
     case 0x9207:
-      return 62; // LAT Z, Rd
+      return 84; // LAT Z, Rd
     case 0x900F:
-      return 63; // POP Rd
+      return 85; // POP Rd
     case 0x920F:
-      return 64; // PUSH Rd
+      return 86; // PUSH Rd
 
     /*-------------------- 1-Operand Instructions ------------------*/
     case 0x9400:
-      return 65; // COM Rd
+      return 87; // COM Rd
     case 0x9401:
-      return 66; // NEG Rd
+      return 88; // NEG Rd
     case 0x9402:
-      return 67; // SWAP Rd
+      return 89; // SWAP Rd
     case 0x9403:
-      return 68; // INC Rd
+      return 90; // INC Rd
     case 0x9405:
-      return 69; // ASR Rd
+      return 91; // ASR Rd
     case 0x9406:
-      return 70; // LSR Rd
+      return 92; // LSR Rd
     case 0x9407:
-      return 71; // ROR Rd
+      return 93; // ROR Rd
+    case 0x940A:
+      return 94; // DEC Rd
   }
 
-  if (WORD & 0xFF0F == 0xEF0F) return 67; // SR Rd
+  if (WORD & 0xFF0F == 0xEF0F)
+    return 95; // SR Rd
+  else if (WORD & 0xFF0F == 0x940B) return 96; // DES round k
+
+  if (WORD & 0xFE0D == 0x940C)
+    return 97; // JMP abs22
+  else if (WORD & 0xFE0D == 0x940E) return 98; // CALL abs22
+
+  switch (WORD & 0x00FF) {
+    case 0x9600:
+      return 99; // ADIW Rp, uimm6
+    case 0x9700:
+      return 100; // SBIW Rp, uimm6
+    case 0x9800:
+      return 101; // CBI a, b
+    case 0x9900:
+      return 102; // SBIC a, b
+    case 0x9A00:
+      return 103; // SBI a, b
+    case 0x9B00:
+      return 104; // SBIS a, b
+  }
+
+  if (WORD & 0x3FF == 0x9C00) return 105; // MUL, unsigned: R1:R0 = Rr × Rd
+
+  switch (WORD & 0x7FF) {
+    case 0xB000:
+      return 106; // IN to I/O space
+    case 0xB800:
+      return 107; // OUT to I/O space
+  }
+
+  switch (WORD & 0x0FFF) {
+    case 0xC000:
+      return 108; // RJMP to PC + simm12
+    case 0xD000:
+      return 109; // RCALL to PC + simm12
+    case 0xE000:
+      return 110; // LDI Rd,K
+  }
+
+  switch (WORD & 0xFE08) {
+    case 0xF800:
+      return 111; // BLD register bit to STATUS.T
+    case 0xFA00:
+      return 112; // BST register bit to STATUS.T
+    case 0xFC00:
+      return 113; // SBRC skip if register bit equals B
+    case 0xFE00:
+      return 114; // SBRS skip if register bit equals B
+  }
 
   return 199;
 }
