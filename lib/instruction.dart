@@ -1,164 +1,6 @@
 import 'dart:html';
 
-int decode(int WORD) {
-  // X X b b b b b b   b b b b b b b b
-  switch ((WORD & 0xC000) >> 14) {
-    case 0x0:
-      // 0 0 X X b b b b   b b b b b b b b
-      switch ((WORD & 0x3000) >> 14) {
-        case 0x0:
-          // 0 0 0 0 X X b b   b b b b b b b b
-          switch ((WORD & 0xC00) >> 12) {
-            // Base Instructions
-            case 0x0:
-              switch ((WORD & 0x300) >> 12) {
-                case 0x0:
-                  return 1; // NOP
-                case 0x1:
-                  return 2; // MOVW Rd,Rr
-                case 0x2:
-                  return 3; // MULS Rd,Rr
-                case 0x3:
-                  if (WORD & 0x80 == 0) {
-                    return WORD & 0x8 == 0 ? 4 : 5; // MULSU Rd,Rr | FMUL Rd,Rr
-                  } else {
-                    return WORD & 0x8 == 0 ? 6 : 7; // FMULS Rd,Rr | FMULU Rd,Rr
-                  }
-              }
-              break;
-          }
-          break;
-      }
-
-      // 0 0 X X X X b b   b b b b b b b b
-      switch ((WORD & 0x3C00) >> 12) {
-        // 2-Operand Instructions
-        case 0x1:
-          return 8; // CPC Rd,Rr
-        case 0x5:
-          return 9; // CP Rd,Rr
-        case 0x2:
-          return 10; // SBC Rd,Rr
-        case 0x6:
-          return 11; // SUB Rd,Rr
-        case 0x3:
-          return (WORD & 0xF == WORD & 0x1F0) ? 12 : 13; // ADD Rd,Rr | LSL Rd
-        case 0x7:
-          return (WORD & 0xF == WORD & 0x1F0) ? 14 : 15; // ADC Rd,Rr | ROL Rd
-        case 0x4:
-          return 16; // CPSE Rd,Rr
-        case 0x8:
-          return 17; // AND Rd,Rr
-        case 0x9:
-          return 18; // EOR Rd,Rr
-        case 0xA:
-          return 19; // OR Rd,Rr
-        case 0xB:
-          return 20; // MOV Rd,Rr
-        default:
-          return 21; // CPI Rd,K
-      }
-
-    case 0x1:
-      // Register-Immediate Operations
-      switch ((WORD & 0x3000) >> 14) {
-        case 0x0:
-          return 20; // SBCI | Rd,K
-        case 0x1:
-          return 21; //SUBI | Rd,K
-        case 0x2:
-          return 22; // SBR & ORI | Rd, K
-        case 0x3:
-          return 23; // CBD & ANDI | Rd,K
-      }
-      break;
-
-    case 0x2:
-      // 1 0 X X X X b b   b b b b b b b b
-      switch ((WORD & 0x3C00) >> 10) {
-        case 0x4:
-          // 1 0 b b b b X b   b b b b X X X X
-          // Load / Store Operations
-          switch ((WORD & 0x20F) >> 9) {
-            case 0x0:
-              return 24; // LDS
-            case 0x200:
-              return 25; // STS
-            case 0x1:
-              return 26; // LD Rd through Z+
-            case 0x201:
-              return 27; // ST Rd through Z+
-            case 0x9:
-              return 28; // LD Rd through Y+
-            case 0x209:
-              return 29; // ST Rd through Y+
-            case 0x2:
-              return 30; // LD Rd through Z-
-            case 0x202:
-              return 31; // ST Rd through Z-
-            case 0xA:
-              return 32; // LD Rd through Y-
-            case 0x20A:
-              return 33; // ST Rd through Y-
-            case 0x4:
-              return 34; // LPM Rd, Z
-            case 0x6:
-              return 35; // ELPM Rd, Z
-            case 0x5:
-              return 36; // LPM Rd, Z+
-            case 0x7:
-              return 37; // ELPM Rd, Z+
-            case 0x204:
-              return 38; // XCH Z, Rd
-            case 0x205:
-              return 39; // LAS Z, Rd
-            case 0x206:
-              return 40; // LAC Z, Rd
-            case 0x207:
-              return 41; // LAT Z, Rd
-            case 0xC:
-              return 42; // LD Rd through X
-            case 0x20C:
-              return 43; // ST Rd through X
-            case 0xD:
-              return 44; // LD Rd through X+
-            case 0x20D:
-              return 45; // ST Rd through X+
-            case 0xE:
-              return 46; // LD Rd through X-
-            case 0x20E:
-              return 47; // ST Rd through X-
-            case 0xF:
-              return 48; // POP Rd
-            case 0x20F:
-              return 48; // PUSH Rd
-          }
-          break;
-
-        default:
-          if ((WORD & 0x5000) >> 12 == 0) {
-            return (WORD & 0x200) == 0
-                ? (WORD & 0x8) == 0
-                    ? 24 // LDD
-                    : 25
-                : (WORD & 0x8) == 0
-                    ? 26
-                    : 27;
-          }
-      }
-      break;
-
-    case 3:
-      break;
-
-    default:
-      return 199;
-  }
-
-  return 199;
-}
-
-int docode_V2(int WORD) {
+int decode_V2(int WORD) {
   /*---------------------- Zero-Operand Instructions ----------------------*/
   switch (WORD) {
     case 0x0:
@@ -166,11 +8,11 @@ int docode_V2(int WORD) {
     case 0x9408:
       return 1; // SEC
     case 0x9409:
-      return 2; // JMP to Z
+      return 2; // IJMP
     case 0x9418:
       return 3; // SEZ
     case 0x9419:
-      return 4; // JMP to EIND:Z
+      return 4; // EIJMP
     case 0x9428:
       return 5; // SEN
     case 0x9438:
@@ -202,11 +44,11 @@ int docode_V2(int WORD) {
     case 0x9508:
       return 19; // RET
     case 0x9509:
-      return 20; // CALL to Z
+      return 20; // ICALL
     case 0x9518:
       return 21; // RETI
     case 0x9519:
-      return 22; // CALL to EIND:Z
+      return 22; // EICALL
     case 0x9588:
       return 23; // SLEEP
     case 0x9598:
@@ -239,7 +81,7 @@ int docode_V2(int WORD) {
     case 0x380:
       return 34; // FMULS Rd,Rr
     case 0x388:
-      return 35; // FMULU Rd,Rr
+      return 35; // FMULSU Rd,Rr
   }
 
   switch (WORD & 0xFC00) {
@@ -258,7 +100,7 @@ int docode_V2(int WORD) {
     case 0x1000:
       return 44; // CPSE Rd,Rr
     case 0x2000:
-      return 45; // AND Rd,Rr
+      return 45; // AND Rd,Rr | TST if Rd == Rr
     case 0x2400:
       return 46; // EOR Rd,Rr | CLR if Rd is Rr
     case 0x2800:
@@ -266,9 +108,9 @@ int docode_V2(int WORD) {
     case 0x2C00:
       return 48; // MOV Rd,Rr
     case 0xF000:
-      return 49; // Conditional branch on status register bit
+      return 49; // BRBS s,k
     case 0xF400:
-      return 50; // Conditional branch on status register bit
+      return 50; // BRBC s,k
   }
 
   if (WORD & 0xF000 == 0x3000) return 51; // CPI Rd,K
@@ -373,7 +215,7 @@ int docode_V2(int WORD) {
   }
 
   if (WORD & 0xFF0F == 0xEF0F)
-    return 95; // SR Rd
+    return 95; // SER Rd
   else if (WORD & 0xFF0F == 0x940B) return 96; // DES round k
 
   if (WORD & 0xFE0D == 0x940C)
@@ -399,9 +241,9 @@ int docode_V2(int WORD) {
 
   switch (WORD & 0x7FF) {
     case 0xB000:
-      return 106; // IN to I/O space
+      return 106; // IN Rd, A
     case 0xB800:
-      return 107; // OUT to I/O space
+      return 107; // OUT Rd, A
   }
 
   switch (WORD & 0x0FFF) {
@@ -422,6 +264,48 @@ int docode_V2(int WORD) {
       return 113; // SBRC skip if register bit equals B
     case 0xFE00:
       return 114; // SBRS skip if register bit equals B
+  }
+
+  switch (WORD & 0xFF8F) {
+    case 0x9408:
+      return 115; // BSET s
+    case 0x9488:
+      return 115; // BCLR s
+  }
+
+  switch (WORD & 0xFC07) {
+    case 0xF000:
+      return 114; // BRCS k | BRLO k , after CP, CPI, SUB, or SUBI
+    case 0xF001:
+      return 115; // BREQ k
+    case 0xF002:
+      return 116; // BRMI k
+    case 0xF003:
+      return 117; // BRVS k
+    case 0xF004:
+      return 118;
+    case 0xF005:
+      return 119; // BRHS
+    case 0xF006:
+      return 121; // BRTS k
+    case 0xF007:
+      return 122; // BRIE k
+    case 0xF400:
+      return 123; // BRCC k | BRSH k , after CP, CPI, SUB, or SUBI
+    case 0xF401:
+      return 124; // BRNE k
+    case 0xF402:
+      return 125; // BRPL k
+    case 0xF403:
+      return 126; // BRVC k
+    case 0xF404:
+      return 127; // BRGE k
+    case 0xF405:
+      return 128; // BRHC k
+    case 0xF406:
+      return 129; // BRTC k
+    case 0xF407:
+      return 130; // BRID k
   }
 
   return 199;

@@ -22,7 +22,7 @@ void main(List<String> arguments) {
       WORD =
           int.parse(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1], radix: 16);
 
-      instruction.decode(WORD);
+      instruction.decode_V2(WORD);
 
       i += 4;
       j++;
