@@ -1,8 +1,6 @@
-import 'dart:html';
-
-int decode_V2(int WORD) {
+int decode(int word) {
   /*---------------------- Zero-Operand Instructions ----------------------*/
-  switch (WORD) {
+  switch (word) {
     case 0x0:
       return 0; // NOP
     case 0x9408:
@@ -66,14 +64,14 @@ int decode_V2(int WORD) {
   }
 
   /*-------------------- 2-Operand Instructions -------------------*/
-  switch (WORD & 0xFF00) {
+  switch (word & 0xFF00) {
     case 0x100:
       return 30; // MOVW Rd,Rr
     case 0x200:
       return 31; // MULS Rd,Rr
   }
 
-  switch (WORD & 0xFF88) {
+  switch (word & 0xFF88) {
     case 0x300:
       return 32; // MULSU Rd,Rr
     case 0x308:
@@ -84,7 +82,7 @@ int decode_V2(int WORD) {
       return 35; // FMULSU Rd,Rr
   }
 
-  switch (WORD & 0xFC00) {
+  switch (word & 0xFC00) {
     case 0x400:
       return 36; // CPC Rd,Rr
     case 0x1400:
@@ -94,9 +92,9 @@ int decode_V2(int WORD) {
     case 0x1800:
       return 39; // SUB Rd,Rr
     case 0xC00:
-      return (WORD & 0xF == WORD & 0x1F0) ? 40 : 41; // ADD Rd,Rr | LSL Rd
+      return (word & 0xF == word & 0x1F0) ? 40 : 41; // ADD Rd,Rr | LSL Rd
     case 0x1C00:
-      return (WORD & 0xF == WORD & 0x1F0) ? 42 : 43; // ADC Rd,Rr | ROL Rd
+      return (word & 0xF == word & 0x1F0) ? 42 : 43; // ADC Rd,Rr | ROL Rd
     case 0x1000:
       return 44; // CPSE Rd,Rr
     case 0x2000:
@@ -113,10 +111,10 @@ int decode_V2(int WORD) {
       return 50; // BRBC s,k
   }
 
-  if (WORD & 0xF000 == 0x3000) return 51; // CPI Rd,K
+  if (word & 0xF000 == 0x3000) return 51; // CPI Rd,K
 
   /*----------------- Register Immediate Operations ---------------*/
-  switch (WORD & 0xF000) {
+  switch (word & 0xF000) {
     case 0x4000:
       return 52; // SBCI Rd,K
     case 0x5000:
@@ -130,7 +128,7 @@ int decode_V2(int WORD) {
   }
 
   /*-------------------- Load / Store operations ------------------*/
-  switch (WORD & 0xD208) {
+  switch (word & 0xD208) {
     case 0x8000:
       return 57; // LDD Rd through Z+k
     case 0x8008:
@@ -141,7 +139,7 @@ int decode_V2(int WORD) {
       return 60; // STD Rd through Y+k
   }
 
-  switch (WORD & 0xFE0F) {
+  switch (word & 0xFE0F) {
     case 0x9000:
       return 61; // LDS rd, i
     case 0x9200:
@@ -214,15 +212,15 @@ int decode_V2(int WORD) {
       return 94; // DEC Rd
   }
 
-  if (WORD & 0xFF0F == 0xEF0F)
+  if (word & 0xFF0F == 0xEF0F)
     return 95; // SER Rd
-  else if (WORD & 0xFF0F == 0x940B) return 96; // DES round k
+  else if (word & 0xFF0F == 0x940B) return 96; // DES round k
 
-  if (WORD & 0xFE0D == 0x940C)
+  if (word & 0xFE0D == 0x940C)
     return 97; // JMP abs22
-  else if (WORD & 0xFE0D == 0x940E) return 98; // CALL abs22
+  else if (word & 0xFE0D == 0x940E) return 98; // CALL abs22
 
-  switch (WORD & 0x00FF) {
+  switch (word & 0x00FF) {
     case 0x9600:
       return 99; // ADIW Rp, uimm6
     case 0x9700:
@@ -237,16 +235,16 @@ int decode_V2(int WORD) {
       return 104; // SBIS a, b
   }
 
-  if (WORD & 0x3FF == 0x9C00) return 105; // MUL, unsigned: R1:R0 = Rr × Rd
+  if (word & 0x3FF == 0x9C00) return 105; // MUL, unsigned: R1:R0 = Rr × Rd
 
-  switch (WORD & 0x7FF) {
+  switch (word & 0x7FF) {
     case 0xB000:
       return 106; // IN Rd, A
     case 0xB800:
       return 107; // OUT Rd, A
   }
 
-  switch (WORD & 0x0FFF) {
+  switch (word & 0x0FFF) {
     case 0xC000:
       return 108; // RJMP to PC + simm12
     case 0xD000:
@@ -255,7 +253,7 @@ int decode_V2(int WORD) {
       return 110; // LDI Rd,K
   }
 
-  switch (WORD & 0xFE08) {
+  switch (word & 0xFE08) {
     case 0xF800:
       return 111; // BLD register bit to STATUS.T
     case 0xFA00:
@@ -266,14 +264,14 @@ int decode_V2(int WORD) {
       return 114; // SBRS skip if register bit equals B
   }
 
-  switch (WORD & 0xFF8F) {
+  switch (word & 0xFF8F) {
     case 0x9408:
       return 115; // BSET s
     case 0x9488:
       return 115; // BCLR s
   }
 
-  switch (WORD & 0xFC07) {
+  switch (word & 0xFC07) {
     case 0xF000:
       return 114; // BRCS k | BRLO k , after CP, CPI, SUB, or SUBI
     case 0xF001:

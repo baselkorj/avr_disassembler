@@ -1,3 +1,3 @@
-bool calculate(int WORD) {
+bool calculate(int word) {
   return false;
 }

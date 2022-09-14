@@ -1,5 +1,4 @@
-import '../lib/instruction.dart' as instruction;
-import '../lib/checksum.dart' as checksum;
+import 'package:avr_disassembler/instruction.dart' as instruction;
 import 'dart:io';
 
 List<String> supportedMimeTypes = ['.hex'];
@@ -14,21 +13,22 @@ void main(List<String> arguments) {
   int i = 9;
 
   while (i < tmp.length) {
-    int WORD = 0;
+    int word = 0;
     int j = 0;
-    double byteCount = int.parse(tmp[i - 8] + tmp[i - 7], radix: 16) / 2;
+    int byteCount = int.parse(tmp[i - 8] + tmp[i - 7], radix: 16);
 
     while (j < byteCount) {
-      WORD =
+      print(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1]);
+      word =
           int.parse(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1], radix: 16);
 
-      instruction.decode_V2(WORD);
+      instruction.decode(word);
 
       i += 4;
-      j++;
+      j += 2;
     }
 
-    i += 13;
+    i += 12;
   }
 
   exit(0);
