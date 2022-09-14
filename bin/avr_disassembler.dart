@@ -10,25 +10,25 @@ void main(List<String> arguments) {
 
   String tmp = File(arguments[0]).readAsStringSync();
 
-  int i = 9;
+  int i = 0;
 
   while (i < tmp.length) {
     int word = 0;
     int j = 0;
-    int byteCount = int.parse(tmp[i - 8] + tmp[i - 7], radix: 16);
+    int byteCount = int.parse(tmp.substring(i + 1, i + 3), radix: 16);
+
+    i += 9;
 
     while (j < byteCount) {
-      print(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1]);
       word =
           int.parse(tmp[i + 2] + tmp[i + 3] + tmp[i] + tmp[i + 1], radix: 16);
 
       instruction.decode(word);
-
       i += 4;
       j += 2;
     }
 
-    i += 12;
+    i += 3;
   }
 
   exit(0);
